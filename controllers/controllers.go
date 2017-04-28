@@ -29,3 +29,21 @@ func (ctrl *TaskController) DeleteTask (c echo.Context) error {
 	ctrl.access.DeleteTask(id)
 	return c.String(http.StatusOK, "Deleted: " + id)
 }
+func (ctrl *TaskController) Login (c echo.Context) error {
+	u := models.User{}
+	c.Bind(&u)
+	us := ctrl.access.DB.Where("username = ? AND password >= ?", u.Username, u.Password).First(&u)
+	if us.RecordNotFound() == false {
+		ctrl.access.Login(u.Username, u.Password)
+		return c.JSON(http.StatusOK, "login succesful")
+	}
+	return echo.ErrUnauthorized
+}
+func (ctrl *TaskController) Register (c echo.Context) error {
+	u := models.User{}
+	c.Bind(&u)
+	ctrl.access.Register(&u)
+	println(u.Username)
+	println(u.Password)
+	return c.JSON(http.StatusOK, "register successful")
+}
