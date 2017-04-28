@@ -36,19 +36,20 @@ func (ctrl *TaskController) Login (c echo.Context) error {
 	c.Bind(&u)
 	pass := u.Password
 	us := ctrl.access.DB.Where("username = ?", u.Username).Find(&u)
-	key := u.Password
-	err := scrypt.CompareHashAndPassword([]byte(key), []byte(pass))
-	if err == nil && us.RecordNotFound() == false {
-		ctrl.access.Login(u.Username, key)
-		return c.JSON(http.StatusOK, "login succesful")
+	if us.RecordNotFound() == false {
+		key := u.Password
+		err := scrypt.CompareHashAndPassword([]byte(key), []byte(pass))
+		if err == nil{
+			ctrl.access.Login(u.Username, key)
+			return c.JSON(http.StatusOK, "login succesful")
+		}
 	}
 	return echo.ErrUnauthorized
 }
 func (ctrl *TaskController) Register (c echo.Context) error {
 	u := models.User{}
 	c.Bind(&u)
-	key := Hash([]byte(u.Password))
-	u.Password = key
+	u.Password = Hash([]byte(u.Password))
 	ctrl.access.Register(&u)
 	return c.JSON(http.StatusOK, "register successful")
 }

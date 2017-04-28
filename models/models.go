@@ -42,13 +42,10 @@ func (access *TaskDataAccess) Register (u *User) User{
 }
 func (access *TaskDataAccess) Login (username string, password string) error {
 	token := jwt.New(jwt.SigningMethodHS256)
-	// Set claims
 	claims := token.Claims.(jwt.MapClaims)
 	claims["username"] = username
 	claims["password"] = password
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
-
-	// Generate encoded token and send it as response.
 	t, err := token.SignedString([]byte("secret"))
 	if err != nil {
 		return err
