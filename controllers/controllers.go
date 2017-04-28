@@ -21,7 +21,7 @@ func (ctrl *TaskController) GetAll (c echo.Context) error {
 }
 func (ctrl *TaskController) PostTask (c echo.Context) error {
 	task := models.Task{}
-	c.Bind(&task) // &ctrl
+	c.Bind(&task)
 	ctrl.access.PostTask(&task)
 	name := task.Name
 	return c.JSON(http.StatusCreated, "created: " + name)
@@ -34,20 +34,14 @@ func (ctrl *TaskController) DeleteTask (c echo.Context) error {
 func (ctrl *TaskController) Login (c echo.Context) error {
 	u := models.User{}
 	c.Bind(&u)
-	os := u.Password
-	println(os)
-	key := Hash([]byte(u.Password))
+	pass := u.Password
 	us := ctrl.access.DB.Where("username = ?", u.Username).Find(&u)
-	as := u.Password
-	err := scrypt.CompareHashAndPassword([]byte(as), []byte(os))
+	key := u.Password
+	err := scrypt.CompareHashAndPassword([]byte(key), []byte(pass))
 	if err == nil && us.RecordNotFound() == false {
 		ctrl.access.Login(u.Username, key)
 		return c.JSON(http.StatusOK, "login succesful")
 	}
-	//if us.RecordNotFound() == false {
-	//	ctrl.access.Login(u.Username, key)
-	//	return c.JSON(http.StatusOK, "login succesful")
-	//}
 	return echo.ErrUnauthorized
 }
 func (ctrl *TaskController) Register (c echo.Context) error {
