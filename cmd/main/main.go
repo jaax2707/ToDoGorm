@@ -21,7 +21,7 @@ func main(){
 	e.POST("/register", task.Register)
 
 	r := e.Group("/restricted")
-	r.Use(middleware.JWT([]byte("secret")))
+	//r.Use(middleware.JWT([]byte("secret")))
 	r.POST("/task", task.PostTask)
 	r.GET("/task", task.GetAll)
 	r.PATCH("/task/:id", task.DeleteTask)
