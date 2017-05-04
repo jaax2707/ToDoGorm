@@ -18,14 +18,6 @@ type TasksCollection struct {
 	Tasks []Task
 }
 
-type TaskDataAccess struct {
-	DB *gorm.DB
-}
-
-func NewTaskDataAccess (DB *gorm.DB) *TaskDataAccess {
-	return &TaskDataAccess{DB}
-}
-
 func (access *TaskDataAccess)GetTask () []Task {
 	tasks := []Task{}
 	access.DB.Find(&tasks)
