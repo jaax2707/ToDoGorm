@@ -1,21 +1,18 @@
-package models
+package access
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/jaax2707/ToDoGorm/models"
 	"time"
 )
 
-type Token struct {
-	Token string
-}
-
-func (access *TaskDataAccess) Register (u *User) User {
+func (access *Db) Register(u *models.User) models.User {
 	defer access.DB.Create(&u)
 	return *u
 }
 
-func (access *TaskDataAccess) Login (username string, password string) string {
+func (access *Db) Login(username string, password string) string {
 	token := jwt.New(jwt.SigningMethodHS256)
 	fmt.Printf("%T", token)
 	claims := token.Claims.(jwt.MapClaims)
