@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func (ctrl *TaskController) Login(c echo.Context) error {
+func (ctrl *DbController) Login(c echo.Context) error {
 	u := models.User{}
 	t := models.Token{}
 	c.Bind(&u)
@@ -25,7 +25,7 @@ func (ctrl *TaskController) Login(c echo.Context) error {
 	return echo.ErrUnauthorized
 }
 
-func (ctrl *TaskController) Register(c echo.Context) error {
+func (ctrl *DbController) Register(c echo.Context) error {
 	u := models.User{}
 	c.Bind(&u)
 	us := ctrl.access.DB.Where("username = ?", u.Username).Find(&u)

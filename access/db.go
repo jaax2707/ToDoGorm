@@ -9,3 +9,5 @@ type Db struct {
 func NewDb(DB *gorm.DB) *Db {
 	return &Db{DB}
 }
+
+

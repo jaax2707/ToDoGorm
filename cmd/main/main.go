@@ -13,7 +13,7 @@ import (
 func main() {
 	db := InitDB()
 	access := access.NewDb(db)
-	task := controllers.NewTaskController(access)
+	task := controllers.NewDbController(access)
 	defer db.Close()
 
 	e := echo.New()
