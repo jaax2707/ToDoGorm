@@ -4,18 +4,21 @@ import (
 	"github.com/jaax2707/ToDoGorm/access"
 	"github.com/jaax2707/ToDoGorm/controllers"
 	"github.com/jaax2707/ToDoGorm/models"
+	"github.com/jaax2707/ToDoGorm/units"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 	_ "github.com/lib/pq"
-	"github.com/patrickmn/go-cache"
+	"github.com/labstack/echo/middleware"
 	"time"
+	"github.com/patrickmn/go-cache"
 )
 
 func main() {
 	db := InitDB()
 	defer db.Close()
-	c := cache.New(5*time.Minute, 5*time.Minute)
+	c := cache.New(10*time.Minute, 10*time.Minute)
+
+	mw := units.NewCacheMiddleware(c)
 
 	authA := access.NewAuthAccess(db)
 	taskA := access.NewTaskAccess(db)
@@ -30,6 +33,7 @@ func main() {
 	e.POST("/register", auth.Register)
 
 	r := e.Group("/restricted")
+	r.Use(mw.CheckToken)
 	r.POST("/task", task.PostTask)
 	r.GET("/task", task.GetAll)
 	r.PATCH("/task/:id", task.DeleteTask)
