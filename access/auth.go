@@ -1,7 +1,6 @@
 package access
 
 import (
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jaax2707/ToDoGorm/models"
 	"time"
@@ -14,7 +13,6 @@ func (access *Db) Register(u *models.User) models.User {
 
 func (access *Db) Login(username string, password string) string {
 	token := jwt.New(jwt.SigningMethodHS256)
-	fmt.Printf("%T", token)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["username"] = username
 	claims["password"] = password

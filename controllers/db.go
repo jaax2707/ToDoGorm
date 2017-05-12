@@ -1,11 +1,15 @@
 package controllers
 
-import "github.com/jaax2707/ToDoGorm/access"
+import (
+	"github.com/jaax2707/ToDoGorm/access"
+	"github.com/robfig/go-cache"
+)
 
 type DbController struct {
+	cache *cache.Cache
 	access *access.Db
 }
 
-func NewDbController(access *access.Db) *DbController {
-	return &DbController{access}
+func NewDbController(access *access.Db, cache *cache.Cache) *DbController {
+	return &DbController{access:access, cache:cache}
 }

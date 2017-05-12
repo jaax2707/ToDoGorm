@@ -6,11 +6,11 @@ import (
 	"github.com/labstack/echo"
 	"log"
 	"net/http"
+	"github.com/pmylund/go-cache"
 )
 
 func (ctrl *DbController) Login(c echo.Context) error {
 	u := models.User{}
-	t := models.Token{}
 	c.Bind(&u)
 	pass := u.Password
 	us := ctrl.access.DB.Where("username = ?", u.Username).Find(&u)
@@ -18,8 +18,11 @@ func (ctrl *DbController) Login(c echo.Context) error {
 		key := u.Password
 		err := scrypt.CompareHashAndPassword([]byte(key), []byte(pass))
 		if err == nil {
-			t.Token = ctrl.access.Login(u.Username, key)
-			return c.JSON(http.StatusOK, "login succesful")
+			t := ctrl.access.Login(u.Username, key)
+			ctrl.cache.Add(t, "token", cache.DefaultExpiration)
+			return c.JSON(http.StatusOK, echo.Map{
+				"token": t,
+			})
 		}
 	}
 	return echo.ErrUnauthorized

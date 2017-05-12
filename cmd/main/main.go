@@ -8,12 +8,16 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	_ "github.com/lib/pq"
+	"github.com/robfig/go-cache"
+	"time"
 )
 
 func main() {
 	db := InitDB()
-	access := access.NewDb(db)
-	task := controllers.NewDbController(access)
+	a := access.NewDb(db)
+	c := cache.New(5*time.Minute, 5*time.Minute)
+
+	task := controllers.NewDbController(a, c)
 	defer db.Close()
 
 	e := echo.New()

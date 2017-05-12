@@ -1,6 +1,8 @@
 package access
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+)
 
 type Db struct {
 	DB *gorm.DB
@@ -9,5 +11,3 @@ type Db struct {
 func NewDb(DB *gorm.DB) *Db {
 	return &Db{DB}
 }
-
-
