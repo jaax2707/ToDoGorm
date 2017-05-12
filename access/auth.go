@@ -4,14 +4,23 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jaax2707/ToDoGorm/models"
 	"time"
+	"github.com/jinzhu/gorm"
 )
 
-func (access *Db) Register(u *models.User) models.User {
+type AuthAccess struct {
+	DB *gorm.DB
+}
+
+func NewAuthAccess(DB *gorm.DB) *AuthAccess {
+	return &AuthAccess{DB}
+}
+
+func (access *AuthAccess) Register(u *models.User) models.User {
 	defer access.DB.Create(&u)
 	return *u
 }
 
-func (access *Db) Login(username string, password string) string {
+func (access *AuthAccess) Login(username string, password string) string {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["username"] = username

@@ -2,14 +2,24 @@ package controllers
 
 import (
 	"github.com/elithrar/simple-scrypt"
+	"github.com/jaax2707/ToDoGorm/access"
 	"github.com/jaax2707/ToDoGorm/models"
 	"github.com/labstack/echo"
+	"github.com/patrickmn/go-cache"
 	"log"
 	"net/http"
-	"github.com/pmylund/go-cache"
 )
 
-func (ctrl *DbController) Login(c echo.Context) error {
+type AuthController struct {
+	cache  *cache.Cache
+	access *access.AuthAccess
+}
+
+func NewAuthController(access *access.AuthAccess, cache *cache.Cache) *AuthController {
+	return &AuthController{access: access, cache: cache}
+}
+
+func (ctrl *AuthController) Login(c echo.Context) error {
 	u := models.User{}
 	c.Bind(&u)
 	pass := u.Password
@@ -28,7 +38,7 @@ func (ctrl *DbController) Login(c echo.Context) error {
 	return echo.ErrUnauthorized
 }
 
-func (ctrl *DbController) Register(c echo.Context) error {
+func (ctrl *AuthController) Register(c echo.Context) error {
 	u := models.User{}
 	c.Bind(&u)
 	us := ctrl.access.DB.Where("username = ?", u.Username).Find(&u)

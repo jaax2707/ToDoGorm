@@ -8,23 +8,26 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	_ "github.com/lib/pq"
-	"github.com/robfig/go-cache"
+	"github.com/patrickmn/go-cache"
 	"time"
 )
 
 func main() {
 	db := InitDB()
-	a := access.NewDb(db)
+	defer db.Close()
 	c := cache.New(5*time.Minute, 5*time.Minute)
 
-	task := controllers.NewDbController(a, c)
-	defer db.Close()
+	authA := access.NewAuthAccess(db)
+	taskA := access.NewTaskAccess(db)
+
+	task := controllers.NewTaskController(taskA, c)
+	auth := controllers.NewAuthController(authA, c)
 
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.POST("/login", task.Login)
-	e.POST("/register", task.Register)
+	e.POST("/login", auth.Login)
+	e.POST("/register", auth.Register)
 
 	r := e.Group("/restricted")
 	r.POST("/task", task.PostTask)
