@@ -7,20 +7,24 @@ import (
 	"time"
 )
 
+// AuthAccess represents a struct of DB
 type AuthAccess struct {
 	DB *gorm.DB
 }
 
+// NewAuthAccess return AuthAccess object
 func NewAuthAccess(DB *gorm.DB) *AuthAccess {
 	return &AuthAccess{DB}
 }
 
-func (access *AuthAccess) Register(u *models.User) models.User {
+// CreateUser put User struct into DB and return reference
+func (access *AuthAccess) CreateUser(u *models.User) models.User {
 	defer access.DB.Create(&u)
 	return *u
 }
 
-func (access *AuthAccess) Login(username string, password string) string {
+// CreateToken create token for User authorization
+func (access *AuthAccess) CreateToken(username string, password string) string {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["username"] = username
@@ -32,6 +36,8 @@ func (access *AuthAccess) Login(username string, password string) string {
 	}
 	return t
 }
+
+// UserExist check if User is in DB table
 func (access *AuthAccess) UserExist(user *models.User) bool {
 	us := access.DB.Where("username = ?", user.Username).Find(&user)
 	if !us.RecordNotFound() {

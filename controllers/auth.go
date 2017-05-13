@@ -10,16 +10,22 @@ import (
 	"net/http"
 )
 
-type AuthController struct {
+// Auth represents struct of cache and AuthAccess
+type Auth struct {
 	cache  *cache.Cache
 	access *access.AuthAccess
 }
 
-func NewAuthController(access *access.AuthAccess, cache *cache.Cache) *AuthController {
-	return &AuthController{access: access, cache: cache}
+// NewAuth return Auth Object
+func NewAuth(access *access.AuthAccess, cache *cache.Cache) *Auth {
+	return &Auth{access: access, cache: cache}
 }
 
-func (ctrl *AuthController) Login(c echo.Context) error {
+// Login get data from JSON (username, password),
+// compare login password and DB password,
+// return ErrUnauthorized if it is not equal,
+// return StatusOK and token if err == nil
+func (ctrl *Auth) Login(c echo.Context) error {
 	u := models.User{}
 	c.Bind(&u)
 	pass := u.Password
@@ -27,7 +33,7 @@ func (ctrl *AuthController) Login(c echo.Context) error {
 		key := u.Password
 		err := scrypt.CompareHashAndPassword([]byte(key), []byte(pass))
 		if err == nil {
-			t := ctrl.access.Login(u.Username, key)
+			t := ctrl.access.CreateToken(u.Username, key)
 			ctrl.cache.Add(t, "token", cache.DefaultExpiration)
 			return c.JSON(http.StatusOK, echo.Map{
 				"token": t,
@@ -37,17 +43,21 @@ func (ctrl *AuthController) Login(c echo.Context) error {
 	return echo.ErrUnauthorized
 }
 
-func (ctrl *AuthController) Register(c echo.Context) error {
+// Register get data from JSON (username, password),
+// if User exist return StatusMethodNotAllowed,
+// if is not exist put User struct into DB and return StatusOK
+func (ctrl *Auth) Register(c echo.Context) error {
 	u := models.User{}
 	c.Bind(&u)
 	if ctrl.access.UserExist(&u) {
 		return c.JSON(http.StatusMethodNotAllowed, "this username already exist")
 	}
 	u.Password = Hash([]byte(u.Password))
-	ctrl.access.Register(&u)
+	ctrl.access.CreateUser(&u)
 	return c.JSON(http.StatusOK, "register successful")
 }
 
+// Hash create and return hash from given password
 func Hash(password []byte) string {
 	hash, err := scrypt.GenerateFromPassword(password, scrypt.DefaultParams)
 	if err != nil {

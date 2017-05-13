@@ -8,28 +8,35 @@ import (
 	"net/http"
 )
 
-type TaskController struct {
+// Task represents struct of cache and AuthAccess
+type Task struct {
 	cache  *cache.Cache
 	access *access.TaskAccess
 }
 
-func NewTaskController(access *access.TaskAccess, cache *cache.Cache) *TaskController {
-	return &TaskController{access: access, cache: cache}
+// NewTask return Task Object
+func NewTask(access *access.TaskAccess, cache *cache.Cache) *Task {
+	return &Task{access: access, cache: cache}
 }
 
-func (ctrl *TaskController) GetAll(c echo.Context) error {
-	return c.JSON(http.StatusOK, ctrl.access.GetTask())
+// GetAll return GetTasks method and StatusOK
+func (ctrl *Task) GetAll(c echo.Context) error {
+	return c.JSON(http.StatusOK, ctrl.access.GetTasks())
 }
 
-func (ctrl *TaskController) PostTask(c echo.Context) error {
+// PostTask get data from JSON (name),
+// call PutTask method and return StatusCreated
+func (ctrl *Task) PostTask(c echo.Context) error {
 	task := models.Task{}
 	c.Bind(&task)
-	ctrl.access.PostTask(&task)
+	ctrl.access.PutTask(&task)
 	name := task.Name
 	return c.JSON(http.StatusCreated, "created: "+name)
 }
 
-func (ctrl *TaskController) DeleteTask(c echo.Context) error {
+// DeleteTask get data from param (id),
+// call DeleteTask method and return StatusOK
+func (ctrl *Task) DeleteTask(c echo.Context) error {
 	id := c.Param("id")
 	ctrl.access.DeleteTask(id)
 	return c.String(http.StatusOK, "Deleted: "+id)
