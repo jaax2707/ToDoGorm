@@ -12,4 +12,3 @@ type Task struct {
 type TasksCollection struct {
 	Tasks []Task
 }
-

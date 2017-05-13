@@ -23,8 +23,7 @@ func (ctrl *AuthController) Login(c echo.Context) error {
 	u := models.User{}
 	c.Bind(&u)
 	pass := u.Password
-	us := ctrl.access.DB.Where("username = ?", u.Username).Find(&u)
-	if us.RecordNotFound() == false {
+	if ctrl.access.UserExist(&u) {
 		key := u.Password
 		err := scrypt.CompareHashAndPassword([]byte(key), []byte(pass))
 		if err == nil {
@@ -41,8 +40,7 @@ func (ctrl *AuthController) Login(c echo.Context) error {
 func (ctrl *AuthController) Register(c echo.Context) error {
 	u := models.User{}
 	c.Bind(&u)
-	us := ctrl.access.DB.Where("username = ?", u.Username).Find(&u)
-	if us.RecordNotFound() == false {
+	if ctrl.access.UserExist(&u) {
 		return c.JSON(http.StatusMethodNotAllowed, "this username already exist")
 	}
 	u.Password = Hash([]byte(u.Password))

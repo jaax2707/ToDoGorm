@@ -6,18 +6,18 @@ import (
 	"net/http"
 )
 
-type CacheMiddleware struct {
+type AuthorizationMiddleware struct {
 	cache *cache.Cache
 }
 
-func NewCacheMiddleware(Cache *cache.Cache) *CacheMiddleware {
-	return &CacheMiddleware{cache: Cache}
+func NewCacheMiddleware(Cache *cache.Cache) *AuthorizationMiddleware {
+	return &AuthorizationMiddleware{cache: Cache}
 }
 
-func (x *CacheMiddleware) CheckToken(next echo.HandlerFunc) echo.HandlerFunc {
+func (m *AuthorizationMiddleware) CheckToken(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		t := c.Request().Header.Get("Authorization")
-		_, exist := x.cache.Get(t)
+		_, exist := m.cache.Get(t)
 		if !exist {
 			return c.NoContent(http.StatusUnauthorized)
 		}

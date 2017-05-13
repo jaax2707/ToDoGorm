@@ -3,8 +3,8 @@ package access
 import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jaax2707/ToDoGorm/models"
-	"time"
 	"github.com/jinzhu/gorm"
+	"time"
 )
 
 type AuthAccess struct {
@@ -31,4 +31,11 @@ func (access *AuthAccess) Login(username string, password string) string {
 		panic(err)
 	}
 	return t
+}
+func (access *AuthAccess) UserExist(user *models.User) bool {
+	us := access.DB.Where("username = ?", user.Username).Find(&user)
+	if !us.RecordNotFound() {
+		return true
+	}
+	return false
 }
