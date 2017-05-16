@@ -13,7 +13,9 @@ type AuthAccessMock struct {
 
 // NewAuthAccess return AuthAccessMock object
 func NewAuthAccessMock() *AuthAccessMock {
-	return &AuthAccessMock{}
+	return &AuthAccessMock{
+		db: make(map[string] *models.User),
+	}
 }
 
 // CreateUser put User struct into DB and return reference
@@ -27,7 +29,7 @@ func (access *AuthAccessMock) CreateToken(username string, password string) (tok
 }
 
 // UserExist check if User is in DB table
-func (access *AuthAccessMock) UserExist(username string) (user *models.User, err error) {
+func (access *AuthAccessMock) GetUser(username string) (user *models.User, err error) {
 	access.db = make(map[string]*models.User)
 
 	user = &models.User{

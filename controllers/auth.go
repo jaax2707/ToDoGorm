@@ -28,7 +28,7 @@ func NewAuth(access access.IAuthAccess, cache *cache.Cache) *Auth {
 func (ctrl *Auth) Login(c echo.Context) error {
 	u := models.User{}
 	c.Bind(&u)
-	us, err := ctrl.access.UserExist(u.Username)
+	us, err := ctrl.access.GetUser(u.Username)
 
 	if err != nil || scrypt.CompareHashAndPassword([]byte(us.Password), []byte(u.Password)) != nil {
 		return c.JSON(http.StatusUnauthorized, "wrong username or password")
@@ -49,7 +49,7 @@ func (ctrl *Auth) Login(c echo.Context) error {
 func (ctrl *Auth) Register(c echo.Context) error {
 	u := models.User{}
 	c.Bind(&u)
-	us, err := ctrl.access.UserExist(u.Username)
+	us, err := ctrl.access.GetUser(u.Username)
 	if err == nil {
 		return c.JSON(http.StatusMethodNotAllowed, "this username already exist")
 	}

@@ -15,7 +15,7 @@ type AuthAccess struct {
 type IAuthAccess interface {
 	CreateUser(u *models.User) models.User
 	CreateToken(username string, password string) (token string, err error)
-	UserExist(username string) (user *models.User, err error)
+	GetUser(username string) (user *models.User, err error)
 }
 
 // NewAuthAccess return AuthAccessMock object
@@ -41,7 +41,7 @@ func (access *AuthAccess) CreateToken(username string, password string) (token s
 }
 
 // UserExist check if User is in DB table
-func (access *AuthAccess) UserExist(username string) (user *models.User, err error) {
+func (access *AuthAccess) GetUser(username string) (user *models.User, err error) {
 	user = &models.User{}
 	err = access.DB.Where("username = ?", username).Find(user).Error
 	return
