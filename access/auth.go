@@ -7,12 +7,18 @@ import (
 	"time"
 )
 
-// AuthAccess represents a struct of DB
+// AuthAccessMock represents a struct of DB
 type AuthAccess struct {
 	DB *gorm.DB
 }
 
-// NewAuthAccess return AuthAccess object
+type IAuthAccess interface {
+	CreateUser(u *models.User) models.User
+	CreateToken(username string, password string) (token string, err error)
+	UserExist(username string) (user *models.User, err error)
+}
+
+// NewAuthAccess return AuthAccessMock object
 func NewAuthAccess(DB *gorm.DB) *AuthAccess {
 	return &AuthAccess{DB}
 }
@@ -24,24 +30,19 @@ func (access *AuthAccess) CreateUser(u *models.User) models.User {
 }
 
 // CreateToken create token for User authorization
-func (access *AuthAccess) CreateToken(username string, password string) string {
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
+func (access *AuthAccess) CreateToken(username string, password string) (token string, err error) {
+	t := jwt.New(jwt.SigningMethodHS256)
+	claims := t.Claims.(jwt.MapClaims)
 	claims["username"] = username
 	claims["password"] = password
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
-	t, err := token.SignedString([]byte("secret"))
-	if err != nil {
-		panic(err)
-	}
-	return t
+	token, err = t.SignedString([]byte("secret"))
+	return
 }
 
 // UserExist check if User is in DB table
-func (access *AuthAccess) UserExist(user *models.User) bool {
-	us := access.DB.Where("username = ?", user.Username).Find(&user)
-	if !us.RecordNotFound() {
-		return true
-	}
-	return false
+func (access *AuthAccess) UserExist(username string) (user *models.User, err error) {
+	user = &models.User{}
+	err = access.DB.Where("username = ?", username).Find(user).Error
+	return
 }

@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// Task represents struct of cache and AuthAccess
+// Task represents struct of cache and AuthAccessMock
 type Task struct {
 	cache  *cache.Cache
 	access *access.TaskAccess

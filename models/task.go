@@ -4,7 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// Task represents struct of Task Name
+// Task define the property of task name
 type Task struct {
 	gorm.Model
 	Name string `json:"name"`

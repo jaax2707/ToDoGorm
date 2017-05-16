@@ -4,13 +4,13 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// Token represents struct of Token
+// Token define the property - token
 type Token struct {
 	gorm.Model
 	Token string
 }
 
-// User represents struct of User Username and Password
+// User defines the properties of User information
 type User struct {
 	gorm.Model
 	Username string `json:"username"`

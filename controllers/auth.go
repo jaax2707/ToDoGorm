@@ -4,20 +4,20 @@ import (
 	"github.com/elithrar/simple-scrypt"
 	"github.com/jaax2707/ToDoGorm/access"
 	"github.com/jaax2707/ToDoGorm/models"
+	"github.com/jaax2707/ToDoGorm/utils"
 	"github.com/labstack/echo"
 	"github.com/patrickmn/go-cache"
-	"log"
 	"net/http"
 )
 
-// Auth represents struct of cache and AuthAccess
+// Auth represents struct of cache and AuthAccessMock
 type Auth struct {
 	cache  *cache.Cache
-	access *access.AuthAccess
+	access access.IAuthAccess
 }
 
 // NewAuth return Auth Object
-func NewAuth(access *access.AuthAccess, cache *cache.Cache) *Auth {
+func NewAuth(access access.IAuthAccess, cache *cache.Cache) *Auth {
 	return &Auth{access: access, cache: cache}
 }
 
@@ -28,19 +28,19 @@ func NewAuth(access *access.AuthAccess, cache *cache.Cache) *Auth {
 func (ctrl *Auth) Login(c echo.Context) error {
 	u := models.User{}
 	c.Bind(&u)
-	pass := u.Password
-	if ctrl.access.UserExist(&u) {
-		key := u.Password
-		err := scrypt.CompareHashAndPassword([]byte(key), []byte(pass))
-		if err == nil {
-			t := ctrl.access.CreateToken(u.Username, key)
-			ctrl.cache.Add(t, "token", cache.DefaultExpiration)
-			return c.JSON(http.StatusOK, echo.Map{
-				"token": t,
-			})
-		}
+	us, err := ctrl.access.UserExist(u.Username)
+
+	if err != nil || scrypt.CompareHashAndPassword([]byte(us.Password), []byte(u.Password)) != nil {
+		return c.JSON(http.StatusUnauthorized, "wrong username or password")
 	}
-	return echo.ErrUnauthorized
+	t, e := ctrl.access.CreateToken(us.Username, us.Password)
+	if e != nil {
+		return c.JSON(http.StatusUnauthorized, "wrong username or password")
+	}
+	ctrl.cache.Add(t, "token", cache.DefaultExpiration)
+	return c.JSON(http.StatusOK, echo.Map{
+		"token": t,
+	})
 }
 
 // Register get data from JSON (username, password),
@@ -49,19 +49,11 @@ func (ctrl *Auth) Login(c echo.Context) error {
 func (ctrl *Auth) Register(c echo.Context) error {
 	u := models.User{}
 	c.Bind(&u)
-	if ctrl.access.UserExist(&u) {
+	us, err := ctrl.access.UserExist(u.Username)
+	if err == nil {
 		return c.JSON(http.StatusMethodNotAllowed, "this username already exist")
 	}
-	u.Password = Hash([]byte(u.Password))
+	u.Password = utils.Hash([]byte(us.Password))
 	ctrl.access.CreateUser(&u)
-	return c.JSON(http.StatusOK, "register successful")
-}
-
-// Hash create and return hash from given password
-func Hash(password []byte) string {
-	hash, err := scrypt.GenerateFromPassword(password, scrypt.DefaultParams)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return string(hash)
+	return c.JSON(http.StatusCreated, "register successful")
 }
