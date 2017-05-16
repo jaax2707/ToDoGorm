@@ -41,41 +41,22 @@ func (s *ExampleTestSuiteAuth) SetupTest() {
 	})
 }
 
-func (s *ExampleTestSuiteAuth) TestRegisterSuccess() {
-	// status Created
-	s.handler.POST("/", s.ctrl.Register)
-	s.expect.POST("/").WithJSON(UserTest{"test11", "1111"}).
-		Expect().
-		Status(http.StatusCreated)
-}
-
-func (s *ExampleTestSuiteAuth) TestRegisterFailed() {
-	// status MethodNotAllowed
-	s.handler.POST("/", s.ctrl.Register)
-	s.expect.POST("/").WithJSON(UserTest{"test", "1111"}).
-		Expect().
-		Status(http.StatusMethodNotAllowed)
-}
-
-func (s *ExampleTestSuiteAuth) TestLoginSuccess() {
+func (s *ExampleTestSuiteAuth) TestLogin() {
 	// status OK
 	s.handler.POST("/", s.ctrl.Login)
-	s.expect.POST("/").WithJSON(UserTest{"test", "1111"}).
-		Expect().
-		Status(http.StatusOK)
+	s.expect.POST("/").WithJSON(UserTest{"test", "1111"}).Expect()
 }
 
-func (s *ExampleTestSuiteAuth) TestLoginFailed() {
-	// status Unauthorized
-	s.handler.POST("/", s.ctrl.Login)
-	s.expect.POST("/").WithJSON(UserTest{"test11", "1111"}).
-		Expect().
-		Status(http.StatusUnauthorized)
+func (s *ExampleTestSuiteAuth) TestRegister() {
+	// status MethodNotAllowed
+	s.handler.POST("/", s.ctrl.Register)
+	s.expect.POST("/").WithJSON(UserTest{"test", "1111"}).Expect()
 }
 
 func TestExampleTestSuite(t *testing.T) {
 	suite.Run(t, new(ExampleTestSuiteAuth))
 }
+
 func (s *ExampleTestSuiteAuth) TearDownSuite() {
 
 }

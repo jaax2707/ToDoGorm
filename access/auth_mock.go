@@ -8,7 +8,7 @@ import (
 
 // AuthAccessMock represents a struct of DB
 type AuthAccessMock struct {
-	// db map[string]*models.User
+	db map[string]*models.User
 }
 
 // NewAuthAccess return AuthAccessMock object
@@ -23,19 +23,22 @@ func (access *AuthAccessMock) CreateUser(u *models.User) models.User {
 
 // CreateToken create token for User authorization
 func (access *AuthAccessMock) CreateToken(username string, password string) (token string, err error) {
-	if username == "test11" {
-		return "", errors.New("")
-	}
-	return "token: lskadnlkj", nil
+	return "", nil
 }
 
 // UserExist check if User is in DB table
 func (access *AuthAccessMock) UserExist(username string) (user *models.User, err error) {
-	if username == "test11" {
-		return &models.User{}, errors.New("")
-	}
-	return &models.User{
+	access.db = make(map[string]*models.User)
+
+	user = &models.User{
 		Username: "test",
 		Password: utils.Hash([]byte("1111")),
-	}, nil
+	}
+
+	access.db[user.Username] = user
+	chkUser := access.db[username]
+	if chkUser != nil {
+		return user, nil
+	}
+	return &models.User{}, errors.New("")
 }
