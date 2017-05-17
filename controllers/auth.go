@@ -31,11 +31,11 @@ func (ctrl *Auth) Login(c echo.Context) error {
 	us, err := ctrl.access.GetUser(u.Username)
 
 	if err != nil || scrypt.CompareHashAndPassword([]byte(us.Password), []byte(u.Password)) != nil {
-		return c.JSON(http.StatusUnauthorized, "wrong username or password")
+		return c.JSON(http.StatusBadRequest, "wrong username or password")
 	}
 	t, e := ctrl.access.CreateToken(us.Username, us.Password)
 	if e != nil {
-		return c.JSON(http.StatusUnauthorized, "wrong username or password")
+		return c.JSON(http.StatusBadRequest, "wrong username or password")
 	}
 	ctrl.cache.Add(t, "token", cache.DefaultExpiration)
 	return c.JSON(http.StatusOK, echo.Map{

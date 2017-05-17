@@ -61,34 +61,15 @@ func (s *ExampleTestSuiteAuth) TestAuth() {
 		UserTesting{
 			UserTest{
 				"test",
-				"1111",
+				"2222",
 			},
 			http.StatusBadRequest,
-		},
-		UserTesting{
-			UserTest{
-				"test2",
-				"1111",
-			},
-			http.StatusOK,
-		},
-	}
-	users2 := []UserTesting{
-		UserTesting{
-			UserTest{
-				"test5555",
-				"1111",
-			},
-			http.StatusUnauthorized,
 		},
 	}
 
 	for _, us := range users {
 		s.expect.POST("/reg").WithJSON(us.userTest).Expect().Status(us.expected)
-		s.expect.POST("/log").WithJSON(us.userTest).Expect().Status(http.StatusOK)
-	}
-	for _, us := range users2 {
-		s.expect.POST("/log").WithJSON(us.userTest).Expect().Status(http.StatusUnauthorized)
+		s.expect.POST("/log").WithJSON(us.userTest).Expect().Status(us.expected)
 	}
 }
 
