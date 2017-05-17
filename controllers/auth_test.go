@@ -41,10 +41,36 @@ func (s *ExampleTestSuiteAuth) SetupTest() {
 	})
 }
 
+type UserTesting struct {
+	userTest UserTest
+	expected int
+}
+
 func (s *ExampleTestSuiteAuth) TestLogin() {
 	// status OK
+
 	s.handler.POST("/", s.ctrl.Login)
-	s.expect.POST("/").WithJSON(UserTest{"test", "1111"}).Expect()
+
+	users := []UserTesting{
+		UserTesting{
+			UserTest{
+				"test",
+				"1111",
+			},
+			http.StatusOK,
+		},
+		UserTesting{
+			UserTest{
+				"test555",
+				"test111125",
+			},
+			http.StatusUnauthorized,
+		},
+	}
+
+	for _, x := range users {
+		s.expect.POST("/").WithJSON(x.userTest).Expect().Status(x.expected)
+	}
 }
 
 func (s *ExampleTestSuiteAuth) TestRegister() {
