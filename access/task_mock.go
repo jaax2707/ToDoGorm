@@ -22,9 +22,9 @@ func (access *TaskAccessMock) GetTasks() (tasks *[]models.Task, err error) {
 }
 
 // PutTask put Task struct into DN and return reference
-func (access *TaskAccessMock) PutTask(t *models.Task) error {
-	if t.Name != "" {
-		access.db[len(access.db)+1] = t
+func (access *TaskAccessMock) PutTask(task *models.Task) error {
+	if task.Name != "" {
+		access.db[len(access.db)+1] = task
 		return nil
 	}
 	return errors.New("")
@@ -32,14 +32,13 @@ func (access *TaskAccessMock) PutTask(t *models.Task) error {
 
 // DeleteTask find Task ID into DB and delete Task
 func (access *TaskAccessMock) DeleteTask(id string) error {
-	x, err := strconv.Atoi(id)
+	ID, err := strconv.Atoi(id)
 	if err != nil {
 		panic(err.Error())
 	}
-	it := access.db[x]
-
-	if it != nil {
-		delete(access.db, x)
+	task := access.db[ID]
+	if task != nil {
+		delete(access.db, ID)
 		return nil
 
 	}
