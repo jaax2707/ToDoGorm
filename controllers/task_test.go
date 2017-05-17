@@ -48,53 +48,40 @@ func (s *ExampleTestSuiteTask) SetupTest() {
 
 func (s *ExampleTestSuiteTask) TestPostTask() {
 
-	s.handler.POST("/", s.ctrl.PostTask)
+	s.handler.POST("/put", s.ctrl.PostTask)
+	s.handler.PATCH("/:id", s.ctrl.DeleteTask)
 
-	users := []TaskTesting{
+	tasks := []TaskTesting{
 		TaskTesting{
 			TaskTest{
 				"test",
 			},
 			"1",
-			http.StatusCreated,
+			http.StatusOK,
+		},
+		TaskTesting{
+			TaskTest{
+				"test2",
+			},
+			"2",
+			http.StatusOK,
 		},
 		TaskTesting{
 			TaskTest{
 				"",
 			},
-			"2",
+			"3",
 			http.StatusBadRequest,
 		},
 	}
 
-	for _, us := range users {
-		s.expect.POST("/").WithJSON(us.task).Expect().Status(us.expected)
+	for _, us := range tasks {
+		s.expect.POST("/put").WithJSON(us.task).Expect().Status(us.expected)
 	}
-}
-
-func (s *ExampleTestSuiteTask) TestDeleteTask() {
-	s.handler.PATCH("/:id", s.ctrl.DeleteTask)
-
-	tasks := []TaskTesting{
-		TaskTesting{
-			task: TaskTest{
-				"task1",
-			},
-			ID:       "3",
-			expected: http.StatusBadRequest,
-		},
-		TaskTesting{
-			task: TaskTest{
-				"task2",
-			},
-			ID:       "7",
-			expected: http.StatusOK,
-		},
+	for _, us := range tasks {
+		s.expect.PATCH("/" + us.ID).Expect().Status(us.expected)
 	}
 
-	for _, t := range tasks {
-		s.expect.PATCH("/" + t.ID).Expect().Status(t.expected)
-	}
 }
 
 func TestExampleTestSuiteTask(t *testing.T) {

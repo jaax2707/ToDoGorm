@@ -23,7 +23,7 @@ func NewAuth(access access.IAuthAccess, cache *cache.Cache) *Auth {
 
 // Login get data from JSON (username, password),
 // compare login password and DB password,
-// return ErrUnauthorized if it is not equal,
+// return StatusBadRequest if it is not equal,
 // return StatusOK and token if err == nil
 func (ctrl *Auth) Login(c echo.Context) error {
 	u := models.User{}

@@ -1,9 +1,9 @@
 package access
 
 import (
-"errors"
-"github.com/jaax2707/ToDoGorm/models"
-"github.com/jinzhu/gorm"
+	"errors"
+	"github.com/jaax2707/ToDoGorm/models"
+	"github.com/jinzhu/gorm"
 )
 
 // TaskAccess represents a struct of DB
@@ -38,7 +38,7 @@ func (access *TaskAccess) PutTask(t *models.Task) error {
 	return errors.New("Task name is empty")
 }
 
-// DeleteTask fund Task ID into DB and delete Task
+// DeleteTask find Task ID into DB and delete Task
 func (access *TaskAccess) DeleteTask(id string) error {
 	return access.DB.Where("id = ?", id).First(&models.Task{}).Delete(&models.Task{}).Error
 }

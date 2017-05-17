@@ -29,7 +29,7 @@ func (ctrl *Task) GetAll(c echo.Context) error {
 }
 
 // PostTask get data from JSON (name),
-// call PutTask method and return StatusCreated
+// call PutTask method and return StatusBadRequest
 func (ctrl *Task) PostTask(c echo.Context) error {
 	task := models.Task{}
 	c.Bind(&task)
@@ -37,7 +37,7 @@ func (ctrl *Task) PostTask(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "task name is empty")
 	}
-	return c.JSON(http.StatusCreated, "created: "+task.Name)
+	return c.JSON(http.StatusOK, "created: "+task.Name)
 }
 
 // DeleteTask get data from param (id),
