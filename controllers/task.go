@@ -11,17 +11,21 @@ import (
 // Task represents struct of cache and AuthAccessMock
 type Task struct {
 	cache  *cache.Cache
-	access *access.TaskAccess
+	access access.ITaskAccess
 }
 
 // NewTask return Task Object
-func NewTask(access *access.TaskAccess, cache *cache.Cache) *Task {
+func NewTask(access access.ITaskAccess, cache *cache.Cache) *Task {
 	return &Task{access: access, cache: cache}
 }
 
 // GetAll return GetTasks method and StatusOK
 func (ctrl *Task) GetAll(c echo.Context) error {
-	return c.JSON(http.StatusOK, ctrl.access.GetTasks())
+	t, err := ctrl.access.GetTasks()
+	if err != nil {
+		return c.JSON(http.StatusNoContent, "No tasks in db")
+	}
+	return c.JSON(http.StatusOK, t)
 }
 
 // PostTask get data from JSON (name),
@@ -29,15 +33,20 @@ func (ctrl *Task) GetAll(c echo.Context) error {
 func (ctrl *Task) PostTask(c echo.Context) error {
 	task := models.Task{}
 	c.Bind(&task)
-	ctrl.access.PutTask(&task)
-	name := task.Name
-	return c.JSON(http.StatusCreated, "created: "+name)
+	err := ctrl.access.PutTask(&task)
+	if err != nil {
+		return c.JSON(http.StatusMethodNotAllowed, "task name is empty")
+	}
+	return c.JSON(http.StatusCreated, "created: "+task.Name)
 }
 
 // DeleteTask get data from param (id),
 // call DeleteTask method and return StatusOK
 func (ctrl *Task) DeleteTask(c echo.Context) error {
 	id := c.Param("id")
-	ctrl.access.DeleteTask(id)
+	err := ctrl.access.DeleteTask(id)
+	if err != nil {
+		return c.JSON(http.StatusMethodNotAllowed, "Task with ID: "+id+" is not exist")
+	}
 	return c.String(http.StatusOK, "Deleted: "+id)
 }

@@ -99,7 +99,7 @@ func (s *ExampleTestSuiteAuth) TestRegister() {
 	}
 }
 
-func TestExampleTestSuite(t *testing.T) {
+func TestExampleTestSuiteAuth(t *testing.T) {
 	suite.Run(t, new(ExampleTestSuiteAuth))
 }
 
