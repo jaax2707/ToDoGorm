@@ -50,7 +50,7 @@ func (ctrl *Auth) Register(c echo.Context) error {
 	u := models.User{}
 	c.Bind(&u)
 	u.Password = utils.Hash([]byte(u.Password))
-	_, err := ctrl.access.CreateUser(&u)
+	err := ctrl.access.CreateUser(&u)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "this username already exist")
 	}

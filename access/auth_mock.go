@@ -18,15 +18,13 @@ func NewAuthAccessMock() *AuthAccessMock {
 }
 
 // CreateUser put User struct into DB and return reference
-func (access *AuthAccessMock) CreateUser(u *models.User) (*models.User, error) {
-
+func (access *AuthAccessMock) CreateUser(u *models.User) error {
 	x := access.db[u.Username]
 	if x != nil {
-		return &models.User{}, errors.New("")
+		return errors.New("")
 	}
-
 	access.db[u.Username] = u
-	return u, nil
+	return nil
 }
 
 // CreateToken create token for User authorization
