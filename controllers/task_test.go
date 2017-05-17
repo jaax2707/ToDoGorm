@@ -40,9 +40,9 @@ func (s *ExampleTestSuiteTask) SetupTest() {
 			Jar:       httpexpect.NewJar(),
 		},
 		Reporter: httpexpect.NewAssertReporter(s.T()),
-		Printers: []httpexpect.Printer{
-			httpexpect.NewDebugPrinter(s.T(), true),
-		},
+		//Printers: []httpexpect.Printer{
+		//	httpexpect.NewDebugPrinter(s.T(), false),
+		//},
 	})
 }
 
