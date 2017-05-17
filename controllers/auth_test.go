@@ -68,15 +68,35 @@ func (s *ExampleTestSuiteAuth) TestLogin() {
 		},
 	}
 
-	for _, x := range users {
-		s.expect.POST("/").WithJSON(x.userTest).Expect().Status(x.expected)
+	for _, us := range users {
+		s.expect.POST("/").WithJSON(us.userTest).Expect().Status(us.expected)
 	}
 }
 
 func (s *ExampleTestSuiteAuth) TestRegister() {
 	// status MethodNotAllowed
 	s.handler.POST("/", s.ctrl.Register)
-	s.expect.POST("/").WithJSON(UserTest{"test", "1111"}).Expect()
+
+	users := []UserTesting{
+		UserTesting{
+			UserTest{
+				"test",
+				"1111",
+			},
+			http.StatusMethodNotAllowed,
+		},
+		UserTesting{
+			UserTest{
+				"test222",
+				"2222",
+			},
+			http.StatusCreated,
+		},
+	}
+
+	for _, us := range users {
+		s.expect.POST("/").WithJSON(us.userTest).Expect().Status(us.expected)
+	}
 }
 
 func TestExampleTestSuite(t *testing.T) {

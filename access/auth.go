@@ -40,7 +40,7 @@ func (access *AuthAccess) CreateToken(username string, password string) (token s
 	return
 }
 
-// UserExist check if User is in DB table
+// GetUser check if User is in DB table
 func (access *AuthAccess) GetUser(username string) (user *models.User, err error) {
 	user = &models.User{}
 	err = access.DB.Where("username = ?", username).Find(user).Error

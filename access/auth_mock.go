@@ -1,6 +1,7 @@
 package access
 
 import (
+	"errors"
 	"github.com/jaax2707/ToDoGorm/models"
 	"github.com/jaax2707/ToDoGorm/utils"
 )
@@ -24,10 +25,14 @@ func (access *AuthAccessMock) CreateToken(username string, password string) (tok
 	return "", nil
 }
 
-// UserExist check if User is in DB table
+// GetUser check if User is in DB table
 func (access *AuthAccessMock) GetUser(username string) (user *models.User, err error) {
-	return &models.User{
-		Username: "test",
-		Password: utils.Hash([]byte("1111")),
-	}, nil
+
+	if username == "test" {
+		return &models.User{
+			Username: "test",
+			Password: utils.Hash([]byte("1111")),
+		}, nil
+	}
+	return &models.User{}, errors.New("")
 }
