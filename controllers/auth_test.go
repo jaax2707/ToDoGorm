@@ -23,6 +23,11 @@ type UserTest struct {
 	Password string `json:"password"`
 }
 
+type UserTesting struct {
+	userTest UserTest
+	expected int
+}
+
 func (s *ExampleTestSuiteAuth) SetupTest() {
 
 	s.handler = echo.New()
@@ -39,11 +44,6 @@ func (s *ExampleTestSuiteAuth) SetupTest() {
 			httpexpect.NewDebugPrinter(s.T(), true),
 		},
 	})
-}
-
-type UserTesting struct {
-	userTest UserTest
-	expected int
 }
 
 func (s *ExampleTestSuiteAuth) TestLogin() {
@@ -87,8 +87,8 @@ func (s *ExampleTestSuiteAuth) TestRegister() {
 		},
 		UserTesting{
 			UserTest{
-				"test222",
-				"2222",
+				"test555",
+				"test111125",
 			},
 			http.StatusCreated,
 		},
@@ -99,7 +99,7 @@ func (s *ExampleTestSuiteAuth) TestRegister() {
 	}
 }
 
-func TestExampleTestSuiteAuth(t *testing.T) {
+func TestExampleTestSuite(t *testing.T) {
 	suite.Run(t, new(ExampleTestSuiteAuth))
 }
 

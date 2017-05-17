@@ -22,6 +22,12 @@ type TaskTest struct {
 	Name string `json:"name"`
 }
 
+type TaskTesting struct {
+	task     TaskTest
+	ID       string
+	expected int
+}
+
 func (s *ExampleTestSuiteTask) SetupTest() {
 
 	s.handler = echo.New()
@@ -40,81 +46,57 @@ func (s *ExampleTestSuiteTask) SetupTest() {
 	})
 }
 
-type TaskTesting struct {
-	taskTest TaskTest
-	expected int
-}
-
-func (s *ExampleTestSuiteTask) TestGetAll() {
-	// status OK
-
-	s.handler.GET("/", s.ctrl.GetAll)
+func (s *ExampleTestSuiteTask) TestPostTask() {
+	// status MethodNotAllowed
+	s.handler.POST("/", s.ctrl.PostTask)
 
 	users := []TaskTesting{
 		TaskTesting{
 			TaskTest{
 				"test",
 			},
-			http.StatusOK,
-		},
-	}
-
-	for _, us := range users {
-		s.expect.GET("/").Expect().Status(us.expected)
-	}
-}
-
-func (s *ExampleTestSuiteTask) TestPostTask() {
-	// status MethodNotAllowed
-	s.handler.POST("/", s.ctrl.PostTask)
-
-	users := []UserTesting{
-		UserTesting{
-			UserTest{
-				"test",
-				"1111",
-			},
-			http.StatusMethodNotAllowed,
-		},
-		UserTesting{
-			UserTest{
-				"test222",
-				"2222",
-			},
+			"1",
 			http.StatusCreated,
 		},
+		TaskTesting{
+			TaskTest{
+				"",
+			},
+			"2",
+			http.StatusMethodNotAllowed,
+		},
 	}
 
 	for _, us := range users {
-		s.expect.POST("/").WithJSON(us.userTest).Expect().Status(us.expected)
+		s.expect.POST("/").WithJSON(us.task).Expect().Status(us.expected)
 	}
 }
 
-//func (s *ExampleTestSuiteTask) TestDeleteTask() {
-//	// status MethodNotAllowed
-//	s.handler.POST("/", s.ctrl.DeleteTask)
-//
-//	users := []UserTesting{
-//		UserTesting{
-//			UserTest{
-//				"test",
-//				"1111",
-//			},
-//			http.StatusMethodNotAllowed,
-//		},
-//		UserTesting{
-//			UserTest{
-//				"test222",
-//				"2222",
-//			},
-//			http.StatusCreated,
-//		},
-//	}
-//
-//	for _, us := range users {
-//		s.expect.POST("/").WithJSON(us.userTest).Expect().Status(us.expected)
-//	}
-//}
+func (s *ExampleTestSuiteTask) TestDeleteTask() {
+	// status MethodNotAllowed
+	s.handler.PATCH("/:id", s.ctrl.DeleteTask)
+
+	tasks := []TaskTesting{
+		TaskTesting{
+			task: TaskTest{
+				"task1",
+			},
+			ID:       "3",
+			expected: http.StatusMethodNotAllowed,
+		},
+		TaskTesting{
+			task: TaskTest{
+				"task2",
+			},
+			ID:       "7",
+			expected: http.StatusOK,
+		},
+	}
+
+	for _, t := range tasks {
+		s.expect.PATCH("/" + t.ID).Expect().Status(t.expected)
+	}
+}
 
 func TestExampleTestSuiteTask(t *testing.T) {
 	suite.Run(t, new(ExampleTestSuiteTask))

@@ -1,9 +1,9 @@
 package access
 
 import (
-	"errors"
-	"github.com/jaax2707/ToDoGorm/models"
-	"github.com/jinzhu/gorm"
+"errors"
+"github.com/jaax2707/ToDoGorm/models"
+"github.com/jinzhu/gorm"
 )
 
 // TaskAccess represents a struct of DB
