@@ -7,14 +7,11 @@ import (
 
 // AuthAccessMock represents a struct of DB
 type AuthAccessMock struct {
-	db map[string]*models.User
 }
 
 // NewAuthAccess return AuthAccessMock object
 func NewAuthAccessMock() *AuthAccessMock {
-	return &AuthAccessMock{
-		db: make(map[string]*models.User),
-	}
+	return &AuthAccessMock{}
 }
 
 // CreateUser put User struct into DB and return reference
