@@ -1,6 +1,7 @@
 package access
 
 import (
+	"errors"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jaax2707/ToDoGorm/models"
 	"github.com/jinzhu/gorm"
@@ -13,7 +14,7 @@ type AuthAccess struct {
 }
 
 type IAuthAccess interface {
-	CreateUser(u *models.User) models.User
+	CreateUser(u *models.User) (*models.User, error)
 	CreateToken(username string, password string) (token string, err error)
 	GetUser(username string) (user *models.User, err error)
 }
@@ -24,9 +25,13 @@ func NewAuthAccess(DB *gorm.DB) *AuthAccess {
 }
 
 // CreateUser put User struct into DB and return reference
-func (access *AuthAccess) CreateUser(u *models.User) models.User {
-	defer access.DB.Create(&u)
-	return *u
+func (access *AuthAccess) CreateUser(u *models.User) (*models.User, error) {
+	err := access.DB.Where("username = ?", u.Username).Find(u).Error
+	if err != nil {
+		err = access.DB.Create(&u).Error
+		return u, err
+	}
+	return &models.User{}, errors.New("")
 }
 
 // CreateToken create token for User authorization

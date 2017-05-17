@@ -47,7 +47,7 @@ func (s *ExampleTestSuiteTask) SetupTest() {
 }
 
 func (s *ExampleTestSuiteTask) TestPostTask() {
-	// status MethodNotAllowed
+
 	s.handler.POST("/", s.ctrl.PostTask)
 
 	users := []TaskTesting{
@@ -63,7 +63,7 @@ func (s *ExampleTestSuiteTask) TestPostTask() {
 				"",
 			},
 			"2",
-			http.StatusMethodNotAllowed,
+			http.StatusBadRequest,
 		},
 	}
 
@@ -73,7 +73,6 @@ func (s *ExampleTestSuiteTask) TestPostTask() {
 }
 
 func (s *ExampleTestSuiteTask) TestDeleteTask() {
-	// status MethodNotAllowed
 	s.handler.PATCH("/:id", s.ctrl.DeleteTask)
 
 	tasks := []TaskTesting{
@@ -82,7 +81,7 @@ func (s *ExampleTestSuiteTask) TestDeleteTask() {
 				"task1",
 			},
 			ID:       "3",
-			expected: http.StatusMethodNotAllowed,
+			expected: http.StatusBadRequest,
 		},
 		TaskTesting{
 			task: TaskTest{

@@ -3,21 +3,30 @@ package access
 import (
 	"errors"
 	"github.com/jaax2707/ToDoGorm/models"
-	"github.com/jaax2707/ToDoGorm/utils"
 )
 
 // AuthAccessMock represents a struct of DB
 type AuthAccessMock struct {
+	db map[string]*models.User
 }
 
 // NewAuthAccess return AuthAccessMock object
 func NewAuthAccessMock() *AuthAccessMock {
-	return &AuthAccessMock{}
+	return &AuthAccessMock{
+		make(map[string]*models.User),
+	}
 }
 
 // CreateUser put User struct into DB and return reference
-func (access *AuthAccessMock) CreateUser(u *models.User) models.User {
-	return *u
+func (access *AuthAccessMock) CreateUser(u *models.User) (*models.User, error) {
+
+	x := access.db[u.Username]
+	if x != nil {
+		return &models.User{}, errors.New("")
+	}
+
+	access.db[u.Username] = u
+	return u, nil
 }
 
 // CreateToken create token for User authorization
@@ -27,12 +36,10 @@ func (access *AuthAccessMock) CreateToken(username string, password string) (tok
 
 // GetUser check if User is in DB table
 func (access *AuthAccessMock) GetUser(username string) (user *models.User, err error) {
-
-	if username == "test" {
-		return &models.User{
-			Username: "test",
-			Password: utils.Hash([]byte("1111")),
-		}, nil
+	user = &models.User{}
+	x := access.db[username]
+	if x != nil {
+		return x, nil
 	}
 	return &models.User{}, errors.New("")
 }

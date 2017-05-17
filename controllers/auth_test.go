@@ -46,10 +46,9 @@ func (s *ExampleTestSuiteAuth) SetupTest() {
 	})
 }
 
-func (s *ExampleTestSuiteAuth) TestLogin() {
-	// status OK
-
-	s.handler.POST("/", s.ctrl.Login)
+func (s *ExampleTestSuiteAuth) TestAuth() {
+	s.handler.POST("/reg", s.ctrl.Register)
+	s.handler.POST("/log", s.ctrl.Login)
 
 	users := []UserTesting{
 		UserTesting{
@@ -61,41 +60,35 @@ func (s *ExampleTestSuiteAuth) TestLogin() {
 		},
 		UserTesting{
 			UserTest{
-				"test555",
-				"test111125",
+				"test",
+				"1111",
+			},
+			http.StatusBadRequest,
+		},
+		UserTesting{
+			UserTest{
+				"test2",
+				"1111",
+			},
+			http.StatusOK,
+		},
+	}
+	users2 := []UserTesting{
+		UserTesting{
+			UserTest{
+				"test5555",
+				"1111",
 			},
 			http.StatusUnauthorized,
 		},
 	}
 
 	for _, us := range users {
-		s.expect.POST("/").WithJSON(us.userTest).Expect().Status(us.expected)
+		s.expect.POST("/reg").WithJSON(us.userTest).Expect().Status(us.expected)
+		s.expect.POST("/log").WithJSON(us.userTest).Expect().Status(http.StatusOK)
 	}
-}
-
-func (s *ExampleTestSuiteAuth) TestRegister() {
-	// status MethodNotAllowed
-	s.handler.POST("/", s.ctrl.Register)
-
-	users := []UserTesting{
-		UserTesting{
-			UserTest{
-				"test",
-				"1111",
-			},
-			http.StatusMethodNotAllowed,
-		},
-		UserTesting{
-			UserTest{
-				"test555",
-				"test111125",
-			},
-			http.StatusCreated,
-		},
-	}
-
-	for _, us := range users {
-		s.expect.POST("/").WithJSON(us.userTest).Expect().Status(us.expected)
+	for _, us := range users2 {
+		s.expect.POST("/log").WithJSON(us.userTest).Expect().Status(http.StatusUnauthorized)
 	}
 }
 
@@ -104,5 +97,4 @@ func TestExampleTestSuite(t *testing.T) {
 }
 
 func (s *ExampleTestSuiteAuth) TearDownSuite() {
-
 }

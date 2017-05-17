@@ -35,7 +35,7 @@ func (ctrl *Task) PostTask(c echo.Context) error {
 	c.Bind(&task)
 	err := ctrl.access.PutTask(&task)
 	if err != nil {
-		return c.JSON(http.StatusMethodNotAllowed, "task name is empty")
+		return c.JSON(http.StatusBadRequest, "task name is empty")
 	}
 	return c.JSON(http.StatusCreated, "created: "+task.Name)
 }
@@ -46,7 +46,7 @@ func (ctrl *Task) DeleteTask(c echo.Context) error {
 	id := c.Param("id")
 	err := ctrl.access.DeleteTask(id)
 	if err != nil {
-		return c.JSON(http.StatusMethodNotAllowed, "Task with ID: "+id+" is not exist")
+		return c.JSON(http.StatusBadRequest, "Task with ID: "+id+" is not exist")
 	}
 	return c.String(http.StatusOK, "Deleted: "+id)
 }

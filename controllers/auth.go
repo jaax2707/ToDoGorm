@@ -44,16 +44,15 @@ func (ctrl *Auth) Login(c echo.Context) error {
 }
 
 // Register get data from JSON (username, password),
-// if User exist return StatusMethodNotAllowed,
+// if User exist return StatusBadRequest,
 // if is not exist put User struct into DB and return StatusOK
 func (ctrl *Auth) Register(c echo.Context) error {
 	u := models.User{}
 	c.Bind(&u)
-	us, err := ctrl.access.GetUser(u.Username)
-	if err == nil {
-		return c.JSON(http.StatusMethodNotAllowed, "this username already exist")
+	u.Password = utils.Hash([]byte(u.Password))
+	_, err := ctrl.access.CreateUser(&u)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "this username already exist")
 	}
-	u.Password = utils.Hash([]byte(us.Password))
-	ctrl.access.CreateUser(&u)
-	return c.JSON(http.StatusCreated, "register successful")
+	return c.JSON(http.StatusOK, "register successful")
 }
