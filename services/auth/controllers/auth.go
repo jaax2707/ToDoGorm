@@ -37,7 +37,7 @@ func (ctrl *Auth) Login(c echo.Context) error {
 	if e != nil {
 		return c.JSON(http.StatusBadRequest, "wrong username or password")
 	}
-	ctrl.cache.Add(t, "token", cache.DefaultExpiration)
+	ctrl.cache.Add(t, t, cache.DefaultExpiration)
 	return c.JSON(http.StatusOK, echo.Map{
 		"token": t,
 	})
@@ -52,7 +52,7 @@ func (ctrl *Auth) Register(c echo.Context) error {
 	u.Password = utils.Hash([]byte(u.Password))
 	err := ctrl.access.CreateUser(&u)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, "this username already exist")
+		return c.JSON(http.StatusOK, "register successful")
 	}
-	return c.JSON(http.StatusOK, "register successful")
+	return c.JSON(http.StatusBadRequest, "this username already exist")
 }

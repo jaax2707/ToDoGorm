@@ -4,11 +4,9 @@ import (
 	"github.com/gavv/httpexpect"
 	"github.com/jaax2707/ToDoGorm/services/task/access"
 	"github.com/labstack/echo"
-	"github.com/patrickmn/go-cache"
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"testing"
-	"time"
 )
 
 type ExampleTestSuiteTask struct {
@@ -32,7 +30,7 @@ func (s *ExampleTestSuiteTask) SetupTest() {
 
 	s.handler = echo.New()
 
-	s.ctrl = NewTask(access.NewTaskAccessMock(), cache.New(10*time.Minute, 10*time.Minute))
+	s.ctrl = NewTask(access.NewTaskAccessMock())
 
 	s.expect = httpexpect.WithConfig(httpexpect.Config{
 		Client: &http.Client{

@@ -4,19 +4,17 @@ import (
 	"github.com/jaax2707/ToDoGorm/services/task/access"
 	"github.com/jaax2707/ToDoGorm/services/task/models"
 	"github.com/labstack/echo"
-	"github.com/patrickmn/go-cache"
 	"net/http"
 )
 
 // Task represents struct of cache and AuthAccessMock
 type Task struct {
-	cache  *cache.Cache
 	access access.ITaskAccess
 }
 
 // NewTask return Task Object
-func NewTask(access access.ITaskAccess, cache *cache.Cache) *Task {
-	return &Task{access: access, cache: cache}
+func NewTask(access access.ITaskAccess) *Task {
+	return &Task{access: access}
 }
 
 // GetAll return GetTasks method and StatusOK

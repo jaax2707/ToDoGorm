@@ -27,10 +27,10 @@ func NewAuthAccess(DB *gorm.DB) *AuthAccess {
 func (access *AuthAccess) CreateUser(u *models.User) error {
 	err := access.DB.Where("username = ?", u.Username).Find(u).Error
 	if err != nil {
-		err = access.DB.Create(&u).Error
+		access.DB.Create(&u)
 		return err
 	}
-	return err
+	return nil
 }
 
 // CreateToken create token for User authorization

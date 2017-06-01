@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package protobuf;
+
+service Token {
+    rpc GetToken(Request) returns (Response) {}
+}
+
+message Request {
+    string token = 1;
+}
+
+message Response {
+
+}
