@@ -1,9 +1,11 @@
 package main
 
 import (
-	"github.com/jaax2707/ToDoGorm/access"
-	"github.com/jaax2707/ToDoGorm/controllers"
-	"github.com/jaax2707/ToDoGorm/units"
+	authA "github.com/jaax2707/ToDoGorm/services/auth/access"
+	authC "github.com/jaax2707/ToDoGorm/services/auth/controllers"
+	taskA "github.com/jaax2707/ToDoGorm/services/task/access"
+	taskC "github.com/jaax2707/ToDoGorm/services/task/controllers"
+	"github.com/jaax2707/ToDoGorm/services/units"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	_ "github.com/lib/pq"
@@ -18,11 +20,11 @@ func main() {
 
 	mw := units.NewCacheMiddleware(c)
 
-	authA := access.NewAuthAccess(db)
-	taskA := access.NewTaskAccess(db)
+	authA := authA.NewAuthAccess(db)
+	taskA := taskA.NewTaskAccess(db)
 
-	task := controllers.NewTask(taskA, c)
-	auth := controllers.NewAuth(authA, c)
+	task := taskC.NewTask(taskA, c)
+	auth := authC.NewAuth(authA, c)
 
 	e := echo.New()
 	e.Use(middleware.Logger())

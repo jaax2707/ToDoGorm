@@ -2,7 +2,7 @@ package access
 
 import (
 	"errors"
-	"github.com/jaax2707/ToDoGorm/models"
+	"github.com/jaax2707/ToDoGorm/services/task/models"
 	"github.com/jinzhu/gorm"
 )
 

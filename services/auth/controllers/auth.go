@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"github.com/elithrar/simple-scrypt"
-	"github.com/jaax2707/ToDoGorm/access"
-	"github.com/jaax2707/ToDoGorm/models"
-	"github.com/jaax2707/ToDoGorm/utils"
+	"github.com/jaax2707/ToDoGorm/services/auth/access"
+	"github.com/jaax2707/ToDoGorm/services/auth/models"
+	"github.com/jaax2707/ToDoGorm/services/auth/utils"
 	"github.com/labstack/echo"
 	"github.com/patrickmn/go-cache"
 	"net/http"

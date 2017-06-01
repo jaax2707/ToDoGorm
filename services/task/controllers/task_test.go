@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/gavv/httpexpect"
-	"github.com/jaax2707/ToDoGorm/access"
+	"github.com/jaax2707/ToDoGorm/services/task/access"
 	"github.com/labstack/echo"
 	"github.com/patrickmn/go-cache"
 	"github.com/stretchr/testify/suite"

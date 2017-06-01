@@ -2,7 +2,7 @@ package access
 
 import (
 	"github.com/dgrijalva/jwt-go"
-	"github.com/jaax2707/ToDoGorm/models"
+	"github.com/jaax2707/ToDoGorm/services/auth/models"
 	"github.com/jinzhu/gorm"
 	"time"
 )

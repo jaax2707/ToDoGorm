@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/jaax2707/ToDoGorm/access"
-	"github.com/jaax2707/ToDoGorm/models"
+	"github.com/jaax2707/ToDoGorm/services/task/access"
+	"github.com/jaax2707/ToDoGorm/services/task/models"
 	"github.com/labstack/echo"
 	"github.com/patrickmn/go-cache"
 	"net/http"

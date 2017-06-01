@@ -1,14 +1,15 @@
 package units
 
 import (
-	"github.com/jaax2707/ToDoGorm/models"
+	auth "github.com/jaax2707/ToDoGorm/services/auth/models"
+	task "github.com/jaax2707/ToDoGorm/services/task/models"
 	"github.com/jinzhu/gorm"
 )
 
 // InitDB Open postgres DB
 func InitDB() *gorm.DB {
 	db, err := gorm.Open("postgres", "user=postgres password=2707 dbname=owner sslmode=disable")
-	db.AutoMigrate(models.Task{}, models.User{})
+	db.AutoMigrate(task.Task{}, auth.User{})
 	if err != nil {
 		panic("failed to connect database !!")
 	}
